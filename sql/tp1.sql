@@ -1,9 +1,14 @@
-/* Remove existed tables */
+/* See if the tables existed */
+select * 
+              from   all_tables 
+              where  table_name IN ('CHAMBRES', 'CLIENTS', 'HOTELS', 'OCCUPATIONS', 'RESERVATIONS', 'TYPESCHAMBRE');
 
+/* Remove existed tables */              
 begin
   for rec in (select table_name 
               from   all_tables 
-              where  table_name IN ('CHAMBRES', 'CLIENTS', 'HOTELS', 'OCCUPATIONS', 'RESERVATIONS', 'TYPESCHAMBRE')
+              where  table_name IN ('CHAMBRES', 'CLIENTS', 'HOTELS', 'OCCUPATIONS', 'RESERVATIONS', 'TYPESCHAMBRE') 
+                    AND all_tables.owner='M1_28'
              )
   loop
     execute immediate 'drop table '||rec.table_name||' CASCADE CONSTRAINTS';
@@ -122,7 +127,13 @@ insert into Occupations values (5, 4, 19, timestamp '2016-04-25 17:30:20', times
 insert into Occupations values (6, 5, 20, timestamp '2016-07-25 17:30:20', timestamp '2016-09-30 17:30:20');
 
 
+/*1*/
 select NomHo from Hotels where NBETOILESHO > 2;
 
+/*2*/
 select count(*) from Hotels;
 
+/*3*/
+select NomTy, NumTy 
+from TYPESCHAMBRE ty, CHAMBRES ch, OCCUPATIONS oc
+where oc.NumCh=ch.NumCh and ch.Numty=ty.NumTy;
