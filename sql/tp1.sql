@@ -1,53 +1,65 @@
+/* Remove existed tables */
+
+begin
+  for rec in (select table_name 
+              from   all_tables 
+              where  table_name IN ('CHAMBRES', 'CLIENTS', 'HOTELS', 'OCCUPATIONS', 'RESERVATIONS', 'TYPESCHAMBRE')
+             )
+  loop
+    execute immediate 'drop table '||rec.table_name||' CASCADE CONSTRAINTS';
+  end loop;             
+end;
+
+              
 create table Hotels (
-NumHo decimal(10),
-NomHo varchar(25),
-RueAdrHo varchar(25),
-VilleHo varchar(25),
-NbEtoilesHo decimal(1),
-constraint pk_hotels primary key (NumHo)
+  NumHo decimal(10),
+  NomHo varchar(25),
+  RueAdrHo varchar(25),
+  VilleHo varchar(25),
+  NbEtoilesHo decimal(1),
+  constraint pk_hotels primary key (NumHo)
 );
 
 create table TypesChambre(
-NumTy decimal(10),
-NomTy varchar(25),
-PrixTy decimal(10),
-constraint pk_type primary key (NumTy)
+  NumTy decimal(10),
+  NomTy varchar(25),
+  PrixTy decimal(10),
+  constraint pk_type primary key (NumTy)
 );
 
 create table Chambres(
-NumCh decimal(10),
-NumHo decimal(10) references Hotels,
-Numty decimal(10) references TypesChambre,
-constraint pk_chambre primary key (NumCh, NumHo)
+  NumCh decimal(10),
+  NumHo decimal(10) references Hotels,
+  Numty decimal(10) references TypesChambre,
+  constraint pk_chambre primary key (NumCh, NumHo)
 );
  
 create table Clients (
-NumCl decimal(10),
-NomCl varchar(25),
-PrenomCl varchar(25),
-RueAdrCl varchar(25),
-VilleCl varchar(25),
-constraint pk_client primary key (NumCl)
+  NumCl decimal(10),
+  NomCl varchar(25),
+  PrenomCl varchar(25),
+  RueAdrCl varchar(25),
+  VilleCl varchar(25),
+  constraint pk_client primary key (NumCl)
 );
 
 create table Reservations (
-NumCl decimal(10),
-NumHo decimal(10) references Hotels, 
-NumTy decimal(10) references TypesChambre,
-DateA timestamp(0),
-Nbjours interval day to second(0) default interval'1' day not null check(Nbjours> interval '0' day),
-NbChambres decimal(2),
-constraint pk_reservation primary key (NumCl, NumHo, NumTy, DateA)
+  NumCl decimal(10),
+  NumHo decimal(10) references Hotels, 
+  NumTy decimal(10) references TypesChambre,
+  DateA timestamp(0),
+  Nbjours interval day to second(0) default interval'1' day not null check(Nbjours> interval '0' day),
+  NbChambres decimal(3),
+  constraint pk_reservation primary key (NumCl, NumHo, NumTy, DateA)
 );
 
-drop table Occupations purge;
 create table Occupations (
-NumCl decimal(10) references Clients not null,
-NumHo decimal(10) ,
-NumCh decimal(10) ,
-DateA timestamp(0),
-DateD timestamp(0),
-constraint pk_occupation primary key (NumHo, NumCh, DateA)
+  NumCl decimal(10) references Clients not null,
+  NumHo decimal(10) ,
+  NumCh decimal(10) ,
+  DateA timestamp(0),
+  DateD timestamp(0),
+  constraint pk_occupation primary key (NumHo, NumCh, DateA)
 );
 
 insert into Hotels values (1, 'AB', 'rue numero 1', 'Marseille', 3);
