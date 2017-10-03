@@ -206,11 +206,22 @@ toDigits x
     | x < 10 = [x]
     | otherwise = toDigits (div x 10) ++ [mod x 10]
 -}
-
-factors:: Int -> Int
-factors n = [x | x <- [1..n], n `mod` x == 0]
+factors :: Int -> [Int]
+factors n = [x | x <- [1..n], (n `mod` x) == 0, x /= n]
 
 perfects :: Int -> [Int]
-perfects x
-  |length (show x) == 1 = []
-  |otherwise = [y | y <- [1.. x], (factors y) == y]
+perfects x = [y | y <- [1.. x], sum(factors y) == y]
+
+
+{-|
+Ex 8
+pyths :: Int -> [(Int ,Int ,Int)]
+|-}
+pyths :: Int -> [(Int ,Int ,Int)]
+pyths n = [ (x, y, z) | x <- [1..n], y <- [1..n], z <- [1..n], x^2 + y^2 == z^2]
+
+pyths1 :: Int -> [(Int ,Int ,Int)]
+pyths1 n = [ (x, y, z) | x <- [1..n], y <- [1..n], z <- [1..n], x < z, y < z, x^2 + y^2 == z^2]
+
+pyths2 :: Int -> [(Int ,Int ,Int)]
+pyths2 n = [ (x, y, z) | x <- [1..n], y <- [1..n], z <- [1..n], x < z, y < z, x^2 + y^2 == z^2]
